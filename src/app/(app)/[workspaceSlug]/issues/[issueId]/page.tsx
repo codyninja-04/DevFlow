@@ -104,7 +104,7 @@ export default async function IssueDetailPage({ params }: PageProps) {
                   <PriorityIcon priority={issue.priority} className="size-3" />
                   {ISSUE_PRIORITY_LABELS[issue.priority as keyof typeof ISSUE_PRIORITY_LABELS] ?? issue.priority}
                 </Badge>
-                {issue.labels.map((label) => (
+                {issue.labels.map((label: { id: string; name: string; color: string }) => (
                   <Badge key={label.id} variant="outline">
                     <span
                       className="mr-1 size-2 rounded-full"
