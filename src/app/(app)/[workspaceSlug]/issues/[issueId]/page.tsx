@@ -11,6 +11,11 @@ import { addComment } from "@/lib/actions/comment"
 import { deleteIssue, updateIssue } from "@/lib/actions/issue"
 import { getIssueById, getWorkspaceMembers } from "@/lib/queries/issue"
 import { getWorkspaceBySlug } from "@/lib/queries/workspace"
+
+type IssueDetail = NonNullable<Awaited<ReturnType<typeof getIssueById>>>
+type SubIssue = IssueDetail["subIssues"][number]
+type IssueActivity = IssueDetail["activities"][number]
+type IssueLabel = IssueDetail["labels"][number]
 import { formatDate, formatRelativeDate } from "@/lib/utils"
 import {
   ISSUE_PRIORITY_LABELS,
@@ -104,7 +109,7 @@ export default async function IssueDetailPage({ params }: PageProps) {
                   <PriorityIcon priority={issue.priority} className="size-3" />
                   {ISSUE_PRIORITY_LABELS[issue.priority as keyof typeof ISSUE_PRIORITY_LABELS] ?? issue.priority}
                 </Badge>
-                {issue.labels.map((label: { id: string; name: string; color: string }) => (
+                {issue.labels.map((label: IssueLabel) => (
                   <Badge key={label.id} variant="outline">
                     <span
                       className="mr-1 size-2 rounded-full"
@@ -136,7 +141,7 @@ export default async function IssueDetailPage({ params }: PageProps) {
                     Sub-issues ({issue.subIssues.length})
                   </h3>
                   <div className="divide-y rounded-lg border">
-                    {issue.subIssues.map((sub) => (
+                    {issue.subIssues.map((sub: SubIssue) => (
                       <Link
                         key={sub.id}
                         href={`/${workspaceSlug}/issues/${sub.id}`}
@@ -175,7 +180,7 @@ export default async function IssueDetailPage({ params }: PageProps) {
               <div>
                 <h3 className="mb-3 text-sm font-semibold">Activity</h3>
                 <div className="space-y-3">
-                  {issue.activities.map((activity) => (
+                  {issue.activities.map((activity: IssueActivity) => (
                     <div
                       key={activity.id}
                       className="flex items-start gap-2 text-xs text-muted-foreground"
